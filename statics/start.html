@@ -1,0 +1,247 @@
+<!--
+ _____                           __
+/\  __`\                        /\ \      __
+\ \ \/\ \  __  __     __    ____\ \ \___ /\_\    ___
+ \ \ \ \ \/\ \/\ \  /'__`\ /',__\\ \  _ `\/\ \ /' _ `\
+  \ \ \\'\\ \ \_\ \/\  __//\__, `\\ \ \ \ \ \ \/\ \/\ \
+   \ \___\_\ \____/\ \____\/\____/ \ \_\ \_\ \_\ \_\ \_\
+    \/__//_/\/___/  \/____/\/___/   \/_/\/_/\/_/\/_/\/_/ 
+v3.0.2 Beta
+
+start.html
+
+Developed by yemaster(PB23151830) with ❤
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <title>Queshin</title>
+    <link rel="preload" as="font" href="/statics/main/genshin.woff2">
+    <link rel="preload" as="image" href="/statics/imgs/bg.jpg">
+    <link rel="preload" as="image" href="/statics/imgs/ustc.svg">
+    <link rel="preload" as="stylesheet" href="/statics/main/start.css">
+    <link rel="stylesheet" type="text/css" href="/statics/main/start.css">
+</head>
+
+<body>
+    <div id="backImg" class="back-img"></div>
+    <div class="startPage1">
+        <img class="logo-text" id="ustcLogo" src="/statics/imgs/ustc.svg">
+        <div id="studyInfo" class="bottom-text">
+            抵制不良卷王，拒绝恶意竞争，注意自我保护，谨防受骗上当，适度学习益脑，沉迷学习伤身，合理安排时间，享受健康生活。<br>
+            审批文号：滑稽出审[2023]114514号&nbsp;&nbsp;ISBN&nbsp;978-7-114-51419-1&nbsp;&nbsp;出版单位：浙江温州江南皮革厂<br>
+            著作权人：南七技校某菜鸡 PB23151830<br>
+            本公司积极履行《网络游戏行业防沉迷自律公约》。
+        </div>
+    </div>
+    <div class="startPage2">
+        <div class="logo-text" id="textLogo">Queshin</div>
+        <!--div class="progress" id="resourcesProgress">
+            <div class="progress-bar" id="resourcesProgressBar"></div>
+            <div class="progress-text">资源加载中
+                <span id="percentText">...</span>
+            </div>
+        </div-->
+        <div id="dimmer"></div>
+        <div id="progress-info">
+            <span>准备加载数据</span><br>
+            <span id="percentText">0.00%</span>
+        </div>
+        <div id="progress-box">
+            <div class="progress" id="resourcesProgress">
+                <div class="progress-left-border" id="plb"></div>
+                <div class="progress-left" id="pl"></div>
+                <div class="progress-main" id="pgm"></div>
+                <div class="progress-bar" id="resourcesProgressBar"></div>
+                <div class="progress-right" id="pr"></div>
+                <div class="progress-right-border" id="prb"></div>
+                <div class="ripple" id="rpl"></div>
+            </div>
+        </div>
+        <div id="click-to-start">
+            点击进入
+        </div>
+    </div>
+    <script>
+        const ustcLogo = document.getElementById("ustcLogo")
+        const studyInfo = document.getElementById("studyInfo")
+        const textLogo = document.getElementById("textLogo")
+
+        const resourcesProgress = document.getElementById("resourcesProgress")
+        const resourcesProgressBar = document.getElementById("resourcesProgressBar")
+        const progressInfo = document.getElementById("progress-info")
+        const percentText = document.getElementById("percentText")
+
+        const prg = resourcesProgress
+        const plb = document.getElementById("plb")
+        const pr = document.getElementById("pr")
+        const pl = document.getElementById("pl")
+        const prb = document.getElementById("prb")
+        const rpl = document.getElementById("rpl")
+        const pgm = document.getElementById("pgm")
+        const pgb = resourcesProgressBar
+        const clickToStart = document.getElementById("click-to-start")
+        const dimmer = document.getElementById("dimmer")
+
+        const resources = [
+            "/statics/imgs/back.svg",
+            "/statics/imgs/blank.svg",
+            "/statics/imgs/left.svg",
+            "/statics/imgs/loader.svg",
+            "/statics/imgs/0.svg",
+            "/statics/imgs/1.svg",
+            "/statics/imgs/2.svg",
+            "/statics/imgs/3.svg",
+            "/statics/imgs/4.svg",
+            "/statics/imgs/5.svg",
+            "/statics/imgs/6.svg",
+            "/statics/imgs/7.svg",
+            "/statics/imgs/8.svg",
+            "/statics/imgs/9.svg",
+            "/statics/imgs/10.svg",
+            "/statics/imgs/11.svg",
+            "/statics/imgs/12.svg",
+            "/statics/imgs/13.svg",
+            "/statics/imgs/14.svg",
+            "/statics/imgs/15.svg",
+            "/statics/imgs/16.svg",
+            "/statics/imgs/17.svg",
+            "/statics/imgs/18.svg",
+            "/statics/imgs/19.svg",
+            "/statics/imgs/20.svg",
+            "/statics/imgs/21.svg",
+            "/statics/imgs/22.svg",
+            "/statics/imgs/23.svg",
+            "/statics/imgs/24.svg",
+            "/statics/imgs/25.svg",
+            "/statics/imgs/26.svg",
+            "/statics/imgs/27.svg",
+            "/statics/imgs/28.svg",
+            "/statics/imgs/29.svg",
+            "/statics/imgs/30.svg",
+            "/statics/imgs/31.svg",
+            "/statics/imgs/32.svg",
+            "/statics/imgs/33.svg",
+        ]
+        let loadedCount = 0
+
+        resourcesProgress.style.display = "none"
+        progressInfo.style.display = "none"
+        clickToStart.style.display = "none"
+
+        if (localStorage === undefined) {
+            location.href = "/error"
+        }
+
+        rotateScreen()
+        window.addEventListener("resize", rotateScreen)
+
+        function rotateScreen() {
+            if (window.innerHeight > window.innerWidth * 1.1)
+                document.body.classList.add("mb")
+            else
+                document.body.classList.remove("mb")
+        }
+
+        function addLoadedResource(e) {
+            loadedCount++
+            resourcesProgressBar.style.width = `${loadedCount / resources.length * 80 + 10}%`
+            percentText.innerText = `${(loadedCount / resources.length * 80 + 10).toFixed(2)}%`
+            if (loadedCount == resources.length) {
+                setTimeout(() => {
+                    pr.style.backgroundColor = "#eee"
+                    pgb.style.width = "100%"
+                    percentText.innerText = `100.00%`
+                }, 501)
+                setTimeout(() => {
+                    progressInfo.style.opacity = "0"
+                    pl.style.opacity = "0"
+                    pr.style.opacity = "0"
+                    pgm.style.opacity = "0"
+                    pgb.style.opacity = "0"
+                }, 1001)
+                setTimeout(() => {
+                    progressInfo.style.display = "none"
+                    prg.style.width = "0"
+                    plb.style.left = "-2.7px"
+                    prb.style.right = "-2.7px"
+                    dimmer.style.opacity = "0"
+                }, 1301)
+                setTimeout(() => {
+                    prg.style.transform = "rotateX(90deg)"
+                    clickToStart.style.display = ""
+                }, 1801)
+                setTimeout(() => {
+                    clickToStart.style.transform = "rotateX(0deg)"
+                    localStorage.mAnimation = "OK"
+                    document.addEventListener("click", () => {
+                        document.body.style.opacity = "0"
+                        setTimeout(() => {
+                            location.href = "/loading"
+                        }, 1100)
+                    })
+                }, 2401)
+            }
+        }
+
+        setTimeout(() => {
+            ustcLogo.style.visibility = "visible"
+            ustcLogo.style.opacity = "1"
+        }, 1000)
+        setTimeout(() => {
+            studyInfo.style.visibility = "visible"
+            studyInfo.style.opacity = "1"
+        }, 1510)
+        setTimeout(() => {
+            ustcLogo.style.opacity = "0"
+            studyInfo.style.opacity = "0"
+        }, 3010)
+        setTimeout(() => {
+            ustcLogo.style.display = "none"
+            studyInfo.style.visibility = "hidden"
+            document.getElementById("backImg").classList.add("bg")
+        }, 3510)
+        setTimeout(() => {
+            document.getElementById("backImg").classList.add("bg-blured")
+        }, 3700)
+        setTimeout(() => {
+            textLogo.style.visibility = "visible"
+            textLogo.style.opacity = "1"
+            resourcesProgress.style.display = "block"
+            dimmer.style.opacity = "1"
+        }, 4820)
+        setTimeout(() => {
+            rpl.style.width = "10px"
+            rpl.style.height = "10px"
+            rpl.style.top = "-4.65px"
+            rpl.style.left = "-10.1px"
+            rpl.style.opacity = "0"
+        }, 5300)
+        setTimeout(() => {
+            prg.style.width = "30%"
+            pgm.style.backgroundColor = "#444"
+            pl.style.backgroundColor = "#444"
+            pr.style.backgroundColor = "#444"
+            plb.style.left = "-12px"
+            prb.style.right = "-12px"
+            pl.style.backgroundColor = "#eee"
+            pgb.style.width = "5%"
+            progressInfo.style.display = ""
+        }, 6020)
+        setTimeout(() => {
+            for (let i in resources) {
+                const img = new Image()
+                img.onload = addLoadedResource
+                img.onerror = addLoadedResource
+                img.src = resources[i]
+            }
+        }, 6500)
+    </script>
+
+</body>
+
+
+</html>
