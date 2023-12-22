@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="302" height="445" version="1.1">
+    <polygon points="1,50 1,25 301,25 301,50"
+        style="fill:rgb(235,235,235);stroke:rgb(71,175,80);stroke-width:1" />
+    <polygon
+        points="1,25 1,1 301,1 301,25"
+        style="fill:rgb(71,175,80);;stroke:rgb(71,175,80);stroke-width:1" />
+    <rect width="300"
+        height="395" x="1" y="50"
+        style="fill:rgb(255,255,255);stroke-width:1;stroke:rgb(71,175,80)" />
+    <g transform="scale(1, 1)">
+        <circle cx="90" cy="140" r="45" fill="#fff" stroke="#47af50" stroke-width="20"></circle>
+        <circle cx="90" cy="140" r="20" fill="#47af50"></circle>
+        <circle cx="150" cy="247" r="45" fill="#fff" stroke="#db2828" stroke-width="20"></circle>
+        <circle cx="150" cy="247" r="20" fill="#db2828"></circle>
+        <circle cx="210" cy="354" r="45" fill="#fff" stroke="#1780db" stroke-width="20"></circle>
+        <circle cx="210" cy="354" r="20" fill="#1780db"></circle>
+    </g>
+</svg>

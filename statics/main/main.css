@@ -1,0 +1,313 @@
+/**
+ * Mahjong - v2.1.2
+ * /statics/main/main.css
+ * 
+ * CopyRight 2023 (c) yemaster
+ * PB23151830 
+ */
+
+@font-face {
+    font-family: "genshin";
+    src: url(/statics/main/genshin.woff2);
+}
+
+*:not(.icon) {
+    font-family: "genshin" !important;
+    user-select: none;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+}
+
+#game-main {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: none;
+}
+
+.segment:not(#chat-box) {
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.info-show {
+    width: 90%;
+    height: 90%;
+    margin: auto;
+}
+
+@media screen and (max-width: 998px) {
+    .info-show {
+        width: 95%;
+    }
+}
+
+@media screen and (max-width: 667px) {
+    .info-show {
+        width: 100%;
+    }
+}
+
+@media screen and (max-height: 678px) {
+    .info-show {
+        height: 100%;
+    }
+}
+
+@media only screen and (max-width: 767.98px) {
+    .mobile-hidden {
+        display: none;
+    }
+}
+
+ul.nav-tabs {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: transparent;
+    border-bottom: 1px solid #ccc;
+}
+
+ul.nav-tabs li {
+    position: relative;
+    float: left;
+}
+
+ul.nav-tabs li a {
+    display: block;
+    color: #212223;
+    text-align: center;
+    padding: 14px 20px;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: 300;
+}
+
+ul.nav-tabs li::before {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 3px;
+    bottom: 0;
+    border-radius: 2px;
+    margin: 0 auto;
+}
+
+ul.nav-tabs li::before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 3px;
+    left: calc(50% - 10px);
+    bottom: 0;
+    border-radius: 2px;
+    transition: background .2s;
+}
+
+ul.nav-tabs li:hover:before {
+    background-color: #aaa;
+}
+
+ul.nav-tabs li.active:before {
+    background-color: #666;
+}
+
+.main-content {
+    width: 100%;
+    height: calc(100% - 57.99px);
+    margin-top: 10px;
+    overflow: auto;
+    padding: 20px 32px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 300;
+}
+
+#chat-box {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, .2);
+    padding: 0;
+    backdrop-filter: blur(4px);
+    background-color: #ffffff90;
+    max-width: 300px;
+    margin: 0 !important;
+    width: 30%;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    height: 300px;
+    max-height: 90vh;
+    overflow-x: hidden;
+    transition: all .4s cubic-bezier(0.9, 0.1, 0.6, 0);
+}
+
+#chat-box.minimized {
+    height: 100px;
+    width: 60px;
+    opacity: 0.2;
+    background-color: #3d3d3d80;
+}
+
+#chat-main {
+    padding: 8px 12px;
+    width: 100%;
+    height: calc(100% - 40px);
+    cursor: pointer;
+    overflow-y: auto;
+    word-break: normal;
+}
+
+#chat-box.minimized #chat-main {
+    overflow: hidden;
+}
+
+#chat-input {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.system-message {
+    width: calc(100% - 6px);
+    background-color: #ccc;
+    padding: 3px 6px;
+    margin: 2px;
+    border-radius: 5px;
+}
+
+.card-img {
+    width: 100%;
+    transform: none;
+    transition: transform .2s;
+}
+
+.card-dragon {
+    position: relative;
+}
+
+.card-dragon::before {
+    content: "龙";
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: #47af50;
+    color: #fff;
+}
+
+.card-img:not(.card-used):hover {
+    transform: translateY(-10px);
+}
+
+.card-last {
+    margin-left: 10px;
+}
+
+.card-used {
+    filter: brightness(0.8);
+}
+
+.card-used:last-child {
+    margin-right: 10px;
+}
+
+.card-box {
+    display: inline-block;
+    position: relative;
+    width: calc((100% - 30px) / 14);
+}
+
+.card-box.card-dragon::before {
+    content: "龙";
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #db2828;
+    color: #fff;
+    padding: 5px;
+}
+
+.my-cards {
+    position: absolute;
+    width: calc(100% - 140px);
+    bottom: 30px;
+    left: 70px;
+}
+
+.op-pan {
+    position: absolute;
+    width: calc(100% - 140px);
+    left: 70px;
+    bottom: calc((100vw - 30px) / 14 * 1.6 + 40px);
+}
+
+.put-card {
+    margin-left: 70px;
+    margin-top: 20px;
+    height: calc(100% - (100vw - 30px) / 14 * 1.6 - 80px);
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.put-card img {
+    height: calc((100% - (100vw - 30px) / 14 * 1.6 - 80px) / 4);
+}
+
+.op-card {
+    height: calc(2vh + 40px);
+    float: left;
+    cursor: pointer;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-box-shadow: inset 0 0 5px #bebebe;
+    background: #bebebe;
+    transition: all 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    -webkit-box-shadow: inset 0 0 5px #aaaaaa;
+    background: #888;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 5px #e0e0e0;
+    background: #e0e0e0;
+    opacity: 1;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 3px 8px;
+    font-size: 10px;
+    line-height: 12px;
+    background-color: #fff;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, .2);
+    opacity: .2;
+    transition: opacity .2s cubic-bezier(0.8, 0.2, 0.9, 0.4);
+}
+
+.footer:hover {
+    opacity: 1;
+}
+
+label {
+    font-weight: 300 !important;
+}

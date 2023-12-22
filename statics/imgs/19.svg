@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="302" height="445" version="1.1">
+    <polygon points="1,50 1,25 301,25 301,50"
+        style="fill:rgb(235,235,235);stroke:rgb(71,175,80);stroke-width:1" />
+    <polygon
+        points="1,25 1,1 301,1 301,25"
+        style="fill:rgb(71,175,80);;stroke:rgb(71,175,80);stroke-width:1" />
+    <rect width="300"
+        height="395" x="1" y="50"
+        style="fill:rgb(255,255,255);stroke-width:1;stroke:rgb(71,175,80)" />
+    <g transform="scale(1, 1)">
+        <g transform="translate(150, 120), scale(0.7, 0.7)">
+            <circle cx="0" cy="0" r="45" fill="#278f30"></circle>
+            <circle cx="0" cy="60" r="45" fill="#278f30"></circle>
+            <circle cx="0" cy="120" r="45" fill="#278f30"></circle>
+            <rect width="4" height="120" x="-2" y="0" fill="#fff"></rect>
+        </g>
+        <g transform="translate(150, 290), scale(0.7, 0.7)">
+            <circle cx="0" cy="0" r="45" fill="#278f30"></circle>
+            <circle cx="0" cy="60" r="45" fill="#278f30"></circle>
+            <circle cx="0" cy="120" r="45" fill="#278f30"></circle>
+            <rect width="4" height="120" x="-2" y="0" fill="#fff"></rect>
+        </g>
+    </g>
+</svg>

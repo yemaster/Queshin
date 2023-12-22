@@ -1,0 +1,34 @@
+<!--
+ _____                           __
+/\  __`\                        /\ \      __
+\ \ \/\ \  __  __     __    ____\ \ \___ /\_\    ___
+ \ \ \ \ \/\ \/\ \  /'__`\ /',__\\ \  _ `\/\ \ /' _ `\
+  \ \ \\'\\ \ \_\ \/\  __//\__, `\\ \ \ \ \ \ \/\ \/\ \
+   \ \___\_\ \____/\ \____\/\____/ \ \_\ \_\ \_\ \_\ \_\
+    \/__//_/\/___/  \/____/\/___/   \/_/\/_/\/_/\/_/\/_/ 
+v3.0.4
+
+loading.html
+
+Developed by yemaster(PB23151830) with ❤
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <title>Queshin</title>
+    <link rel="preload" as="font" href="https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/main/genshin.woff2">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/main/loading.css">
+    <script>if (localStorage === undefined) { location.href = "/error" } if (localStorage.mAnimation != "OK") { location.href = "/" }</script>
+</head>
+
+<body>
+    <div id="D">
+        <div id="A"></div><img id="C" src="https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/loader.svg">
+    </div>
+    <script>const A = document.getElementById("A"); const B = [[20, 100], [50, 600], [60, 800], [92, 1500], [100, 3000]]; for (let i in B) { setTimeout(() => { A.style.width = `${100 - B[i][0]}%` }, B[i][1]) } setTimeout(() => { let rid = Number(localStorage.mRoomId); if (isNaN(rid) || rid < 0 || rid >= 10000) location.href = `/room/hall`; else location.href = `/room/${rid}` }, 3100)</script>
+</body>
+
+</html>

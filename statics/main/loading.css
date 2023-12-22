@@ -1,0 +1,8 @@
+/**
+ * Mahjong - v2.1.2
+ * /statics/main/loading.css
+ * 
+ * CopyRight 2023 (c) yemaster
+ * PB23151830 
+ */
+@font-face{font-family:"genshin";src:url(/statics/main/genshin.woff2)}*{font-family:"genshin"}body{margin:0;display:flex;height:100vh}#D{position:relative;display:block;margin:auto;width:clamp(5.625rem,-0.683rem + 39.74vw,62.5rem)}#A{position:absolute;top:0;right:0;width:100%;height:100%;background-color:#fff;opacity:0.8}#D #C{width:100%}

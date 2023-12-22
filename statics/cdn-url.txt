@@ -1,0 +1,28 @@
+ - fomantic-ui 2.9.3
+   https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css
+   https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js
+ - vue 2.7.14
+   https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.min.js
+ - vue-i18n 8.28.2
+   https://cdn.jsdelivr.net/npm/vue-i18n@8.28.2/dist/vue-i18n.min.js
+ - jquery 3.7.1
+   https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js
+ - lodash 4.17.21
+   https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js
+ - socket.io-client 4.7.2
+   https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js
+ - main 3.0.0 Beta
+   https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.0.3/main/main.css
+   https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.0.3/main/main.js
+   https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.0.3/main/teach.js
+   https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.0.3/main/start.css
+   https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.0.3/main/translations.js
+   https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.0.3/main/genshin.woff2
+   https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.0.3/imgs/xx.svg
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-i18n@8.28.2/dist/vue-i18n.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>

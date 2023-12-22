@@ -1,0 +1,492 @@
+<!--
+ _____                           __
+/\  __`\                        /\ \      __
+\ \ \/\ \  __  __     __    ____\ \ \___ /\_\    ___
+ \ \ \ \ \/\ \/\ \  /'__`\ /',__\\ \  _ `\/\ \ /' _ `\
+  \ \ \\'\\ \ \_\ \/\  __//\__, `\\ \ \ \ \ \ \/\ \/\ \
+   \ \___\_\ \____/\ \____\/\____/ \ \_\ \_\ \_\ \_\ \_\
+    \/__//_/\/___/  \/____/\/___/   \/_/\/_/\/_/\/_/\/_/ 
+v3.1.1
+
+room.html
+
+Developed by yemaster(PB23151830) with ❤
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <title>中科雀 - Queshin USTC</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/main/main.css" rel="stylesheet" type="text/css">
+    <script>
+        let tmpRoom = location.pathname.match(/\/room\/(.*)/)[1]
+        if ((isNaN(tmpRoom) || tmpRoom < 0 || tmpRoom >= 10000) && tmpRoom != "hall") {
+            localStorage.mtab = 0
+            tmpRoom = Math.floor(Math.random() * 10000)
+        }
+        let roomAvailable = true
+        if (tmpRoom == "hall") {
+            localStorage.mtab = 0
+            roomAvailable = false
+        }
+        else
+            localStorage.mRoomId = tmpRoom
+        if (localStorage.mAnimation != "OK") {
+            location.href = "/"
+        }
+        if (tmpRoom != "hall" && Number(location.pathname.match(/\/room\/(.*)/)[1]) != tmpRoom)
+            location.href = `/room/${tmpRoom}`
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="ui active inverted dimmer" v-if="isloading">
+            <div class="ui text loader">{{ $t('mes.gettingConnected') }}</div>
+        </div>
+        <ul class="nav-tabs">
+            <div class="info-show">
+                <li><a>{{ app.name }}</a></li>
+                <li v-for="(p,i) in navs" :class="{ active: i == navShow }" @click="navShow = i"><a
+                        href="javascript:;">{{ $t(p.name) }}</a></li>
+            </div>
+        </ul>
+        <div id="game-main">
+            <template>
+                <div class="info-show">
+                    <div class="main-content">
+                        <template v-if="navShow == 0">
+                            <h2>{{ $t('nav.room') }}列表</h2>
+                            <div class="ui stackable grid">
+                                <div class="four wide column">
+                                    <div class="ui form" v-if="roomInfo.roomAvailable">
+                                        <div class="field">
+                                            <label for="roomId">{{ $t('nav.room') }} ID</label>
+                                            <div class="ui fluid input" :class="{action:toRoom!=room}">
+                                                <input name="roomId" type="text" v-model="toRoom">
+                                                <button class="ui button" v-if="toRoom != room"
+                                                    @click="gotoRoom(toRoom)">
+                                                    进入{{ $t('nav.room') }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a class="button ui tiny primary" v-else href="javascript:;"
+                                        @click="gotoRoom(Math.floor(Math.random() * 10000))">随机房间</a>
+                                </div>
+                            </div>
+                            <table class="ui very basic unstackable table">
+                                <thead>
+                                    <tr>
+                                        <th>{{ $t('nav.room') }} ID</th>
+                                        <th>{{ $t('user.status') }}</th>
+                                        <th>{{ $t("mes.onlineUsers") }}</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(v, k) in availableRoom" :class="{ active: k == room }">
+                                        <td>{{ k }}</td>
+                                        <td><span class="ui label" :class="{ 'grey basic':!v.started, red:v.started}">{{
+                                                v.started?"游戏中":"未开始" }}</span></td>
+                                        <td>{{v.player0}}等{{v.playerNum}}个{{ $t("mes.onlineUsers") }}</td>
+                                        <td><a href="javascript:;" @click="gotoRoom(k)" v-if="k!=room">进入房间</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template v-if="navShow == 1">
+                            <template v-if="user.status == 2">
+                                <div class="ui container">
+                                    <template v-if="!huPeople && !user.spectator">
+                                        <div class="ui grid">
+                                            <div class="two wide column">
+                                                <div class="ui segment">
+                                                    {{ $t('game.dragon') }}：<br>
+                                                    <div style="width:100%" class="card-box">
+                                                        <img style="width:100%" :src="`https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/blank.svg`"
+                                                            v-if="game.dragon < 0 || game.dragon > 33">
+                                                        </img>
+                                                        <img v-else style="width:100%"
+                                                            :src="`https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/${game.dragon}.svg`">
+                                                        </img>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="fourteen wide column">
+                                                <div class="ui segment">
+                                                    <div style="margin-bottom: 12px;">
+                                                        {{ $t('game.yourCards') }}：
+                                                        <span v-if="nowSid == sked.id" class="ui red horizontal label">
+                                                            {{ $t('game.yourRound') }}
+                                                        </span>
+                                                    </div>
+                                                    <div v-for="(cd,i) in game.cards" class="card-box"
+                                                        :class="{'card-last': nowSid == sked.id && i == game.cards.length - 1, 'card-dragon':cd.num==game.dragon}">
+                                                        <img style="cursor: pointer;" class="card-img"
+                                                            :class="{ basic:cd.num!=game.dragon && i !=13, 'card-used': cd.type != 0 }"
+                                                            @click="put_card(cd.num)"
+                                                            :src="`https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/${cd.num}.svg`">
+                                                        </img>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ui segment" style="overflow:visible">
+                                            <h3>{{ $t('game.options') }}</h3>
+                                            <button class="ui button" v-show="canOp && sked.id != nowSid"
+                                                @click="doOp(0)">{{
+                                                $t('game.cancel') }}</button>
+                                            <button class="ui red button" v-show="availableOp[0]" @click="doOp(1)">
+                                                {{ $t("game.hu") }}
+                                            </button>
+                                            <template v-if="availableOp[1]">
+                                                <template v-if="sked.id == nowSid">
+                                                    <div class="ui gang-option green button">
+                                                        {{ $t('game.gang') }}
+                                                    </div>
+                                                    <div class="ui flowing popup top left transition hidden">
+                                                        <div v-for="(gangpai, gangpaii) in gangCard"
+                                                            v-bind:key="gangpai">
+                                                            <img v-for="nu in 4" v-bind:key="nu"
+                                                                :src="`https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/${gangpai}.svg`"
+                                                                @click="doOp(2, gangpai)" class="op-card"></img>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <button class="ui button violet" @click="doOp(2)" v-else>{{
+                                                    $t("game.gang") }}</button>
+                                            </template>
+                                            <button class="ui primary button" v-show="availableOp[2]" @click="doOp(3)">
+                                                {{ $t("game.pen") }}
+                                            </button>
+                                            <template v-if="availableOp[3]">
+                                                <div class="ui eat-option green button">
+                                                    {{ $t('game.eat') }}
+                                                </div>
+                                                <div class="ui flowing popup top left transition hidden">
+                                                    <div v-for="(ite, ind) in 3" v-bind:key="ind" v-if="eatPos[ind]">
+                                                        <img v-for="(hsy, jhx) in 3" v-bind:key="jhx"
+                                                            :src="`https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/${newPutCard + ind + jhx - 2}.svg`"
+                                                            @click="doOp(4, ind - 2)" class="op-card"></img>
+                                                        <div style="clear: both"></div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div class="ui grid">
+                                            <div class="eight wide column">
+                                                <div class="ui segment">
+                                                    <h3>{{ $t('game.discardedCards') }}</h3>
+                                                    <div v-for="(plyr,i) in game.pt">
+                                                        <span style="vertical-align: top;">
+                                                            PLY{{ i+1 }}:
+                                                            <template v-if="i == game.gameme">
+                                                                ({{ $t('game.me') }})
+                                                            </template>
+                                                        </span>
+                                                        <span v-for="j in plyr" class="ui basic horizontal label"
+                                                            :class="{ red: j >= 100 }">
+                                                            {{ cardsName[j % 100] }}
+                                                        </span>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="eight wide column">
+                                                <div class="ui segment">
+                                                    <h3>吃碰情况</h3>
+                                                    <div v-for="(plyr,i) in game.op">
+                                                        <span style="vertical-align: top;">
+                                                            PLY{{ i+1 }}:
+                                                            <template v-if="i == game.me">
+                                                                ({{ $t('game.me') }})
+                                                            </template>
+                                                        </span>
+                                                        <span v-for="j in plyr" class="ui basic horizontal label">
+                                                            {{ cardsName[j % 100] }}
+                                                        </span>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <div class="ui segment" v-if="huPeople">
+                                            <h1>你<template v-if="huPeople.id==game.me">赢</template><template
+                                                    v-else>输</template>了</h1>
+                                            <span>PLY{{ huPeople.id+1 }} {{ onlineUsers[huPeople.id].nickname }}({{
+                                                huPeople.name
+                                                }}糊了)</span><br>
+                                            <button class="ui button grey" @click="quitGame">离开</button>
+                                        </div>
+                                        <div class="ui grid">
+                                            <div class="two wide column">
+                                                <div class="ui segment">
+                                                    {{ $t('game.dragon') }}：<br>
+                                                    <div class="card-box" style="width: 100%">
+                                                        <img style="width:100%" :src="`https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/blank.svg`"
+                                                            v-if="game.dragon < 0 || game.dragon > 33">
+                                                        </img>
+                                                        <img v-else style="width:100%"
+                                                            :src="`https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/${game.dragon}.svg`">
+                                                        </img>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="fourteen wide column">
+                                                <div class="ui segment">
+                                                    <h3>{{ $t('game.discardedCards') }}</h3>
+                                                    <div v-for="(plyr,i) in game.pt">
+                                                        <span style="vertical-align: top;">
+                                                            PLY{{ i+1 }}:
+                                                        </span>
+                                                        <div v-for="j in plyr" class="card-box">
+                                                            <img :class="{ red: j >= 100 }" class="card-img"
+                                                                :src="`https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/${j%100}.svg`"></img>
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                                <div class="ui segment">
+                                                    <h3>手牌情况</h3>
+                                                    <div v-for="(plyr,psid,c) in allShow">
+                                                        <span style="vertical-align: top;">
+                                                            PLY{{ c+1 }}:
+                                                        </span>
+                                                        <div v-for="(cd,i) in plyr" class="card-box"
+                                                            :class="{ 'card-last': nowSid == psid && i == game.cards.length - 1, 'card-dragon':cd.num==game.dragon, }">
+                                                            <img style="cursor: pointer;" class="card-img"
+                                                                :class="{ 'card-used': cd.type != 0 }"
+                                                                :src="`https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/imgs/${cd.num}.svg`">
+                                                            </img>
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <div class="ui stackable grid" v-else>
+                                <div class="six wide column">
+                                    <div class="ui form">
+                                        <div class="field">
+                                            <label>{{ $t('nav.room') }} ID</label>
+                                            <div class="ui fluid input" :class="{action:toRoom!=room}">
+                                                <input name="roomId" type="text" v-model="toRoom">
+                                                <button class="ui button" v-if="toRoom != room"
+                                                    @click="gotoRoom(toRoom)">
+                                                    进入房间
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="field mobile-hidden">
+                                            <label>{{ $t('user.nickname') }}</label>
+                                            <div class="ui action fluid input">
+                                                <input type=text v-model="user.nickname" @input="updateMe"
+                                                    :placeholder="$t('user.nickname')">
+                                                <button class="ui button" @click="randomName">
+                                                    {{ $t('mes.randomOne') }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <a class="ui tiny primary button"
+                                                href="https://baike.baidu.com/item/%E5%86%B2%E5%87%BB%E9%BA%BB%E5%B0%86/3739533"
+                                                target="_blank">游戏规则</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ten wide column">
+                                    <h2>{{ $t("mes.onlineUsers") }}</h2>
+                                    <table class="ui very basic unstackable table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>{{ $t('user.nickname') }}</th>
+                                                <th>{{ $t('user.status') }}</th>
+                                                <th v-if="game.me == 0">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(u, i) in onlineUsers" :class="{active:sked.id==u.clientId}">
+                                                <td>{{ i+1 }}</td>
+                                                <td>{{ u.nickname }}
+                                                    <span v-if="i == game.me">({{ $t("game.me") }})</span>
+                                                    <span v-if="i == 0" class="ui label basic violet">{{
+                                                        $t("user.admin") }}</span>
+                                                </td>
+                                                <td>
+                                                    <span v-if="u.spectator" class="ui basic label green">观察者</span>
+                                                    <span v-else-if="u.status == 0" class="ui basic label grey">
+                                                        {{ $t('user.free') }}
+                                                    </span>
+                                                    <span v-else-if="u.status == 1" class="ui label blue">
+                                                        {{ $t('user.waiting') }}
+                                                    </span>
+                                                    <span v-if="u.status == 2" class="ui label red">
+                                                        {{ $t('user.ingame') }}
+                                                    </span>
+                                                </td>
+                                                <td v-if="game.me == 0">
+                                                    <a href="javascript:;" @click="kickGuy(i)">踢出此人</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div>
+                                        <button class="ui large button" :class="{ basic: !user.spectator }"
+                                            @click="changeSpectator">
+                                            仅观察
+                                        </button>
+                                        <button class="ui large primary button" :class="{ basic: user.status == 0 }"
+                                            @click="changeStatus"
+                                            :disabled="(availablePlayers.length <= 1) || (user.spectator) || gamingPlayers.length > 0">
+                                            {{ $t('mes.forceStart') }} {{ forcedUsers }} / {{ availablePlayers.length }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-if="navShow == 2">
+                            <div class="ui form">
+                                <div class="field">
+                                    <label>{{ $t('user.nickname') }}</label>
+                                    <div class="ui action fluid input">
+                                        <input type=text v-model="user.nickname" @input="updateMe"
+                                            :placeholder="$t('user.nickname')">
+                                        <button class="ui button" @click="randomName">
+                                            {{ $t('mes.randomOne') }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label>ClientID</label>
+                                    <div class="ui disabled input">
+                                        <input type="text" v-model="sked.id">
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-if="navShow == 3">
+                            <div class="ui form">
+                                <label for="lang">{{ $t('nav.language') }}</label>
+                                <div class="ui fluid selection dropdown langdp">
+                                    <input type="hidden" name="lang" v-model="$i18n.locale">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">Select {{ $t('nav.language') }}</div>
+                                    <div class="menu">
+                                        <div class="item" :data-value="lg.val" v-for="(lg, i) in langs"><i
+                                                :class="`${lg.flag} flag`"></i>{{ lg.show }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui divider"></div>
+                            <div class="ui link segment" style="cursor: pointer;" @click="navShow = 4">
+                                <i class="icon help"></i>{{ $t('nav.help') }}
+                            </div>
+                            <div class="ui link segment" style="cursor: pointer;" @click="navShow = 5">
+                                <i class="icon info"></i>{{ $t('nav.about') }} {{ app.name }} {{ app.version }}
+                            </div>
+                        </template>
+                        <template v-if="navShow == 4">
+                            <h1>{{ $t('nav.help') }}</h1>
+                            <h2>游戏玩法</h2>
+                            <div class="ui segment">
+                                <a class="ui primary button"
+                                    href="https://baike.baidu.com/item/%E5%86%B2%E5%87%BB%E9%BA%BB%E5%B0%86/3739533"
+                                    target="_blank">游戏规则</a>
+                                <button class="ui primary button" @click="startTeach()">手把手教学(暂未完成)</button>
+                            </div>
+                            <h2>{{ $t('help.feedback') }}</h2>
+                            <div class="ui segment">
+                                请发送邮件到 <a href="mailto:yemaster@mail.ustc.edu.cn">yemaster at mail.ustc.edu.cn</a> 或联系
+                                QQ：1440169768
+                            </div>
+                            <h2>FAQ</h2>
+                            <div class='ui segment'>
+                                Q: 我找不到“强制开始”按钮则么办<br>
+                                A: 两人以上才会在“房间”出现
+                            </div>
+                        </template>
+                        <template v-if="navShow == 5">
+                            <h1>{{ $t('nav.about') }} {{ app.name }} {{ app.version }}</h1>
+                            <div class="ui segment">
+                                {{ app.name }} {{app.version}}<br>
+                                <div v-html="$t('content.about')"></div>
+                                <p>审批文号，ISBN号，出版单位均为杜撰，非真实</p>
+                            </div>
+                            <h2>致谢</h2>
+                            <div class="ui segment">
+                                <p>一~九万以及字牌字体来自 <a href="http://www.shufami.com/"
+                                        target="_blank">http://www.shufami.com/</a></p>
+                                <p>部分图画来自 AI 生成。</p>
+                                <p>部分界面设计、部分字体参考 <a href="https://ys.mihoyo.com" target="_blank">原神</a>。</p>
+                            </div>
+                            <h2>更新日志</h2>
+                            <div class="ui segment">
+                                <b>V3.1.1 版本</b>
+                                <ul>
+                                    <li>更新了部分界面结构</li>
+                                    <li>修复了杠显示不正确的问题</li>
+                                </ul>
+                                <a href="https://github.com/yemaster/Queshin/blob/master/docs/updatelog.md" target="_blank">更多</a>
+                            </div>
+                            <h2>更多</h2>
+                            <div class="ui segment">
+                                <p><a href="javascript:;">使用条款</a></p>
+                                <p><a href="https://github.com/yemaster/queshin" target="_blank">开源</a></p>
+                                <p><a href="https://github.com/yemaster/Queshin/blob/master/docs/bot-api.md" target="_blank">Bot开发文档</a></p>
+                                <p><a href="https://github.com/yemaster/Queshin/blob/master/docs/socket-api.md" target="_blank">WebSocket接口文档</a></p>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="ui segment" id="chat-box" :class="{minimized:!chatShowMode}">
+            <div id="chat-main" @click="chatShowMode = !chatShowMode">
+                <template v-for="(c, i) in chats">
+                    <template v-if="c.s">
+                        <div class="system-message">
+                            <i class="icon small grey info"></i>
+                            {{ c.mes }}
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div>
+                            <b>{{ c.user }}</b>
+                            {{ c.mes }}
+                        </div>
+                    </template>
+                </template>
+            </div>
+            <form @submit="sendMessage">
+                <div class="ui input" id="chat-input">
+                    <input type="text" v-model="chatMessage" :placeholder="$t('mes.chat')" minlength="1"
+                        :disabled="!chatShowMode">
+                </div>
+            </form>
+        </div>
+        <div class="ui container footer">
+            {{ app.name }} {{ app.version }}-cdn. <br>CopyRight &copy;
+            <script>document.write(new Date().getFullYear())</script> yemaster. All Rights Reserved.
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-i18n@8.28.2/dist/vue-i18n.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/main/translations.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/yemaster/mahjong-statics@3.1.1/main/main.js"></script>
+</body>
+
+</html>
