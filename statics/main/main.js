@@ -19,7 +19,7 @@ let mahjong = new Vue({
         // 应用信息
         app: {
             name: 'Queshin',
-            version: 'v3.1.0 Beta',
+            version: 'v3.1.1',
             author: 'yemaster',
         },
         navShow: 1,

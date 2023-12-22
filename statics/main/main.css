@@ -298,6 +298,7 @@ h6 {
     padding: 3px 8px;
     font-size: 10px;
     line-height: 12px;
+    background-color: #fff;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, .2);
     opacity: .2;
     transition: opacity .2s cubic-bezier(0.8, 0.2, 0.9, 0.4);

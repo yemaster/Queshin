@@ -1,5 +1,5 @@
 /**
- * Queshin - v3.1.0 Beta
+ * Queshin - v3.1.1
  * /server.js
  * 
  * CopyRight 2023 (c) yemaster
@@ -62,7 +62,7 @@ function startPage() {
     console.log("  \\ \\ \\\\'\\\\ \\ \\_\\ \\/\\  __//\\__, `\\\\ \\ \\ \\ \\ \\ \\/\\ \\/\\ \\")
     console.log("   \\ \\___\\_\\ \\____/\\ \\____\\/\\____/ \\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\")
     console.log("    \\/__//_/\\/___/  \\/____/\\/___/   \\/_/\\/_/\\/_/\\/_/\\/_/")
-    console.log("v3.1.0 Beta by yemaster(PB23151830)")
+    console.log("v3.1.1 by yemaster(PB23151830)")
     console.log("----------------------")
 }
 

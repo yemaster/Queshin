@@ -6,7 +6,7 @@
   \ \ \\'\\ \ \_\ \/\  __//\__, `\\ \ \ \ \ \ \/\ \/\ \
    \ \___\_\ \____/\ \____\/\____/ \ \_\ \_\ \_\ \_\ \_\
     \/__//_/\/___/  \/____/\/___/   \/_/\/_/\/_/\/_/\/_/ 
-v3.0.4 Beta
+v3.1.1
 
 room.html
 
@@ -47,178 +47,16 @@ Developed by yemaster(PB23151830) with ❤
         <div class="ui active inverted dimmer" v-if="isloading">
             <div class="ui text loader">{{ $t('mes.gettingConnected') }}</div>
         </div>
-        <template v-if="user.status == 2">
-            <div class="ui container" style="margin-top: 20px">
-                <template v-if="!huPeople && !user.spectator">
-                    <div class="ui grid">
-                        <div class="two wide column">
-                            <div class="ui segment">
-                                {{ $t('game.dragon') }}：<br>
-                                <div style="width:100%" class="card-box">
-                                    <img style="width:100%" :src="`/statics/imgs/blank.svg`"
-                                        v-if="game.dragon < 0 || game.dragon > 33">
-                                    </img>
-                                    <img v-else style="width:100%" :src="`/statics/imgs/${game.dragon}.svg`">
-                                    </img>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="fourteen wide column">
-                            <div class="ui segment">
-                                <div style="margin-bottom: 12px;">
-                                    {{ $t('game.yourCards') }}：
-                                    <span v-if="nowSid == sked.id" class="ui red horizontal label">
-                                        {{ $t('game.yourRound') }}
-                                    </span>
-                                </div>
-                                <div v-for="(cd,i) in game.cards" class="card-box"
-                                    :class="{'card-last': nowSid == sked.id && i == game.cards.length - 1, 'card-dragon':cd.num==game.dragon}">
-                                    <img style="cursor: pointer;" class="card-img"
-                                        :class="{ basic:cd.num!=game.dragon && i !=13, 'card-used': cd.type != 0 }"
-                                        @click="put_card(cd.num)" :src="`/statics/imgs/${cd.num}.svg`">
-                                    </img>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ui segment" style="overflow:visible">
-                        <h3>{{ $t('game.options') }}</h3>
-                        <button class="ui button" v-show="canOp && sked.id != nowSid" @click="doOp(0)">{{
-                            $t('game.cancel') }}</button>
-                        <button class="ui red button" v-show="availableOp[0]" @click="doOp(1)">
-                            {{ $t("game.hu") }}
-                        </button>
-                        <template v-if="availableOp[1]">
-                            <template v-if="sked.id == nowSid">
-                                <div class="ui gang-option green button">
-                                    {{ $t('game.gang') }}
-                                </div>
-                                <div class="ui flowing popup top left transition hidden">
-                                    <div v-for="(gangpai, gangpaii) in gangCard" v-bind:key="gangpai">
-                                        <img v-for="nu in 4" v-bind:key="nu" :src="`/statics/imgs/${gangpai}.svg`"
-                                            @click="doOp(2, gangpai)" class="op-card"></img>
-                                    </div>
-                                </div>
-                            </template>
-                            <button class="ui button violet" @click="doOp(2)" v-else>{{ $t("game.gang") }}</button>
-                        </template>
-                        <button class="ui primary button" v-show="availableOp[2]" @click="doOp(3)">
-                            {{ $t("game.pen") }}
-                        </button>
-                        <template v-if="availableOp[3]">
-                            <div class="ui eat-option green button">
-                                {{ $t('game.eat') }}
-                            </div>
-                            <div class="ui flowing popup top left transition hidden">
-                                <div v-for="(ite, ind) in 3" v-bind:key="ind" v-if="eatPos[ind]">
-                                    <img v-for="(hsy, jhx) in 3" v-bind:key="jhx"
-                                        :src="`/statics/imgs/${newPutCard + ind + jhx - 2}.svg`"
-                                        @click="doOp(4, ind - 2)" class="op-card"></img>
-                                    <div style="clear: both"></div>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-                    <div class="ui grid">
-                        <div class="eight wide column">
-                            <div class="ui segment">
-                                <h3>{{ $t('game.discardedCards') }}</h3>
-                                <div v-for="(plyr,i) in game.pt">
-                                    <span style="vertical-align: top;">
-                                        PLY{{ i+1 }}:
-                                        <template v-if="i == game.gameme">
-                                            ({{ $t('game.me') }})
-                                        </template>
-                                    </span>
-                                    <span v-for="j in plyr" class="ui basic horizontal label"
-                                        :class="{ red: j >= 100 }">
-                                        {{ cardsName[j % 100] }}
-                                    </span>
-                                    <br>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="eight wide column">
-                            <div class="ui segment">
-                                <h3>吃碰情况</h3>
-                                <div v-for="(plyr,i) in game.op">
-                                    <span style="vertical-align: top;">
-                                        PLY{{ i+1 }}:
-                                        <template v-if="i == game.me">
-                                            ({{ $t('game.me') }})
-                                        </template>
-                                    </span>
-                                    <span v-for="j in plyr" class="ui basic horizontal label">
-                                        {{ cardsName[j % 100] }}
-                                    </span>
-                                    <br>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-                <template v-else>
-                    <div class="ui segment" v-if="huPeople">
-                        <h1>你<template v-if="huPeople.id==game.me">赢</template><template v-else>输</template>了</h1>
-                        <span>PLY{{ huPeople.id+1 }} {{ onlineUsers[huPeople.id].nickname }}({{ huPeople.name
-                            }}糊了)</span><br>
-                        <button class="ui button grey" @click="quitGame">离开</button>
-                    </div>
-                    <div class="ui grid">
-                        <div class="two wide column">
-                            <div class="ui segment">
-                                {{ $t('game.dragon') }}：<br>
-                                <div class="card-box" style="width: 100%">
-                                    <img style="width:100%" :src="`/statics/imgs/blank.svg`"
-                                        v-if="game.dragon < 0 || game.dragon > 33">
-                                    </img>
-                                    <img v-else style="width:100%" :src="`/statics/imgs/${game.dragon}.svg`">
-                                    </img>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="fourteen wide column">
-                            <div class="ui segment">
-                                <h3>{{ $t('game.discardedCards') }}</h3>
-                                <div v-for="(plyr,i) in game.pt">
-                                    <span style="vertical-align: top;">
-                                        PLY{{ i+1 }}:
-                                    </span>
-                                    <div v-for="j in plyr" class="card-box">
-                                        <img :class="{ red: j >= 100 }" class="card-img"
-                                            :src="`/statics/imgs/${j%100}.svg`"></img>
-                                    </div>
-                                    <br>
-                                </div>
-                            </div>
-                            <div class="ui segment">
-                                <h3>手牌情况</h3>
-                                <div v-for="(plyr,psid,c) in allShow">
-                                    <span style="vertical-align: top;">
-                                        PLY{{ c+1 }}:
-                                    </span>
-                                    <div v-for="(cd,i) in plyr" class="card-box"
-                                        :class="{ 'card-last': nowSid == psid && i == game.cards.length - 1, 'card-dragon':cd.num==game.dragon, }">
-                                        <img style="cursor: pointer;" class="card-img"
-                                            :class="{ 'card-used': cd.type != 0 }" :src="`/statics/imgs/${cd.num}.svg`">
-                                        </img>
-                                    </div>
-                                    <br>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
+        <ul class="nav-tabs">
+            <div class="info-show">
+                <li><a>{{ app.name }}</a></li>
+                <li v-for="(p,i) in navs" :class="{ active: i == navShow }" @click="navShow = i"><a
+                        href="javascript:;">{{ $t(p.name) }}</a></li>
             </div>
-        </template>
-        <div id="game-main" v-else>
+        </ul>
+        <div id="game-main">
             <template>
                 <div class="info-show">
-                    <ul class="nav-tabs">
-                        <li><a>{{ app.name }}</a></li>
-                        <li v-for="(p,i) in navs" :class="{ active: i == navShow }" @click="navShow = i"><a
-                                href="javascript:;">{{ $t(p.name) }}</a></li>
-                    </ul>
                     <div class="main-content">
                         <template v-if="navShow == 0">
                             <h2>{{ $t('nav.room') }}列表</h2>
@@ -261,7 +99,181 @@ Developed by yemaster(PB23151830) with ❤
                             </table>
                         </template>
                         <template v-if="navShow == 1">
-                            <div class="ui stackable grid">
+                            <template v-if="user.status == 2">
+                                <div class="ui container">
+                                    <template v-if="!huPeople && !user.spectator">
+                                        <div class="ui grid">
+                                            <div class="two wide column">
+                                                <div class="ui segment">
+                                                    {{ $t('game.dragon') }}：<br>
+                                                    <div style="width:100%" class="card-box">
+                                                        <img style="width:100%" :src="`/statics/imgs/blank.svg`"
+                                                            v-if="game.dragon < 0 || game.dragon > 33">
+                                                        </img>
+                                                        <img v-else style="width:100%"
+                                                            :src="`/statics/imgs/${game.dragon}.svg`">
+                                                        </img>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="fourteen wide column">
+                                                <div class="ui segment">
+                                                    <div style="margin-bottom: 12px;">
+                                                        {{ $t('game.yourCards') }}：
+                                                        <span v-if="nowSid == sked.id" class="ui red horizontal label">
+                                                            {{ $t('game.yourRound') }}
+                                                        </span>
+                                                    </div>
+                                                    <div v-for="(cd,i) in game.cards" class="card-box"
+                                                        :class="{'card-last': nowSid == sked.id && i == game.cards.length - 1, 'card-dragon':cd.num==game.dragon}">
+                                                        <img style="cursor: pointer;" class="card-img"
+                                                            :class="{ basic:cd.num!=game.dragon && i !=13, 'card-used': cd.type != 0 }"
+                                                            @click="put_card(cd.num)"
+                                                            :src="`/statics/imgs/${cd.num}.svg`">
+                                                        </img>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ui segment" style="overflow:visible">
+                                            <h3>{{ $t('game.options') }}</h3>
+                                            <button class="ui button" v-show="canOp && sked.id != nowSid"
+                                                @click="doOp(0)">{{
+                                                $t('game.cancel') }}</button>
+                                            <button class="ui red button" v-show="availableOp[0]" @click="doOp(1)">
+                                                {{ $t("game.hu") }}
+                                            </button>
+                                            <template v-if="availableOp[1]">
+                                                <template v-if="sked.id == nowSid">
+                                                    <div class="ui gang-option green button">
+                                                        {{ $t('game.gang') }}
+                                                    </div>
+                                                    <div class="ui flowing popup top left transition hidden">
+                                                        <div v-for="(gangpai, gangpaii) in gangCard"
+                                                            v-bind:key="gangpai">
+                                                            <img v-for="nu in 4" v-bind:key="nu"
+                                                                :src="`/statics/imgs/${gangpai}.svg`"
+                                                                @click="doOp(2, gangpai)" class="op-card"></img>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <button class="ui button violet" @click="doOp(2)" v-else>{{
+                                                    $t("game.gang") }}</button>
+                                            </template>
+                                            <button class="ui primary button" v-show="availableOp[2]" @click="doOp(3)">
+                                                {{ $t("game.pen") }}
+                                            </button>
+                                            <template v-if="availableOp[3]">
+                                                <div class="ui eat-option green button">
+                                                    {{ $t('game.eat') }}
+                                                </div>
+                                                <div class="ui flowing popup top left transition hidden">
+                                                    <div v-for="(ite, ind) in 3" v-bind:key="ind" v-if="eatPos[ind]">
+                                                        <img v-for="(hsy, jhx) in 3" v-bind:key="jhx"
+                                                            :src="`/statics/imgs/${newPutCard + ind + jhx - 2}.svg`"
+                                                            @click="doOp(4, ind - 2)" class="op-card"></img>
+                                                        <div style="clear: both"></div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div class="ui grid">
+                                            <div class="eight wide column">
+                                                <div class="ui segment">
+                                                    <h3>{{ $t('game.discardedCards') }}</h3>
+                                                    <div v-for="(plyr,i) in game.pt">
+                                                        <span style="vertical-align: top;">
+                                                            PLY{{ i+1 }}:
+                                                            <template v-if="i == game.gameme">
+                                                                ({{ $t('game.me') }})
+                                                            </template>
+                                                        </span>
+                                                        <span v-for="j in plyr" class="ui basic horizontal label"
+                                                            :class="{ red: j >= 100 }">
+                                                            {{ cardsName[j % 100] }}
+                                                        </span>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="eight wide column">
+                                                <div class="ui segment">
+                                                    <h3>吃碰情况</h3>
+                                                    <div v-for="(plyr,i) in game.op">
+                                                        <span style="vertical-align: top;">
+                                                            PLY{{ i+1 }}:
+                                                            <template v-if="i == game.me">
+                                                                ({{ $t('game.me') }})
+                                                            </template>
+                                                        </span>
+                                                        <span v-for="j in plyr" class="ui basic horizontal label">
+                                                            {{ cardsName[j % 100] }}
+                                                        </span>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <div class="ui segment" v-if="huPeople">
+                                            <h1>你<template v-if="huPeople.id==game.me">赢</template><template
+                                                    v-else>输</template>了</h1>
+                                            <span>PLY{{ huPeople.id+1 }} {{ onlineUsers[huPeople.id].nickname }}({{
+                                                huPeople.name
+                                                }}糊了)</span><br>
+                                            <button class="ui button grey" @click="quitGame">离开</button>
+                                        </div>
+                                        <div class="ui grid">
+                                            <div class="two wide column">
+                                                <div class="ui segment">
+                                                    {{ $t('game.dragon') }}：<br>
+                                                    <div class="card-box" style="width: 100%">
+                                                        <img style="width:100%" :src="`/statics/imgs/blank.svg`"
+                                                            v-if="game.dragon < 0 || game.dragon > 33">
+                                                        </img>
+                                                        <img v-else style="width:100%"
+                                                            :src="`/statics/imgs/${game.dragon}.svg`">
+                                                        </img>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="fourteen wide column">
+                                                <div class="ui segment">
+                                                    <h3>{{ $t('game.discardedCards') }}</h3>
+                                                    <div v-for="(plyr,i) in game.pt">
+                                                        <span style="vertical-align: top;">
+                                                            PLY{{ i+1 }}:
+                                                        </span>
+                                                        <div v-for="j in plyr" class="card-box">
+                                                            <img :class="{ red: j >= 100 }" class="card-img"
+                                                                :src="`/statics/imgs/${j%100}.svg`"></img>
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                                <div class="ui segment">
+                                                    <h3>手牌情况</h3>
+                                                    <div v-for="(plyr,psid,c) in allShow">
+                                                        <span style="vertical-align: top;">
+                                                            PLY{{ c+1 }}:
+                                                        </span>
+                                                        <div v-for="(cd,i) in plyr" class="card-box"
+                                                            :class="{ 'card-last': nowSid == psid && i == game.cards.length - 1, 'card-dragon':cd.num==game.dragon, }">
+                                                            <img style="cursor: pointer;" class="card-img"
+                                                                :class="{ 'card-used': cd.type != 0 }"
+                                                                :src="`/statics/imgs/${cd.num}.svg`">
+                                                            </img>
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <div class="ui stackable grid" v-else>
                                 <div class="six wide column">
                                     <div class="ui form">
                                         <div class="field">
@@ -402,12 +414,6 @@ Developed by yemaster(PB23151830) with ❤
                                 Q: 我找不到“强制开始”按钮则么办<br>
                                 A: 两人以上才会在“房间”出现
                             </div>
-                            <h2>{{ $t('help.devwiki') }}</h2>
-                            <div class='ui segment'>
-                                <a href="javascript:;">WebSocket接口文档</a><br>
-                                <a href="javascript:;">二次开发文档</a><br>
-                                <a href="javascript:;">License</a><br>
-                            </div>
                         </template>
                         <template v-if="navShow == 5">
                             <h1>{{ $t('nav.about') }} {{ app.name }} {{ app.version }}</h1>
@@ -423,10 +429,21 @@ Developed by yemaster(PB23151830) with ❤
                                 <p>部分图画来自 AI 生成。</p>
                                 <p>部分界面设计、部分字体参考 <a href="https://ys.mihoyo.com" target="_blank">原神</a>。</p>
                             </div>
+                            <h2>更新日志</h2>
+                            <div class="ui segment">
+                                <b>V3.1.1 版本</b>
+                                <ul>
+                                    <li>更新了部分界面结构</li>
+                                    <li>修复了杠显示不正确的问题</li>
+                                </ul>
+                                <a href="https://github.com/yemaster/Queshin/blob/master/docs/updatelog.md" target="_blank">更多</a>
+                            </div>
                             <h2>更多</h2>
                             <div class="ui segment">
                                 <p><a href="javascript:;">使用条款</a></p>
-                                <p><a href="javascript:;">开源</a></p>
+                                <p><a href="https://github.com/yemaster/queshin" target="_blank">开源</a></p>
+                                <p><a href="https://github.com/yemaster/Queshin/blob/master/docs/bot-api.md" target="_blank">Bot开发文档</a></p>
+                                <p><a href="https://github.com/yemaster/Queshin/blob/master/docs/socket-api.md" target="_blank">WebSocket接口文档</a></p>
                             </div>
                         </template>
                     </div>
